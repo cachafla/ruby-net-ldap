@@ -516,6 +516,7 @@ class Net::LDAP
   #++
   def get_operation_result
     os = OpenStruct.new
+
     if @result.is_a?(Hash)
       # We might get a hash of LDAP response codes instead of a simple
       # numeric code.
@@ -822,7 +823,7 @@ class Net::LDAP
         conn.close if conn
       end
     end
-    @result == 0
+    @result[:resultCode] == 0
   end
 
   # Modifies the attribute values of a particular entry on the LDAP
@@ -920,7 +921,7 @@ class Net::LDAP
         conn.close if conn
       end
     end
-    @result == 0
+    @result[:resultCode] == 0
   end
 
   # Add a value to an attribute. Takes the full DN of the entry to modify,
@@ -991,7 +992,7 @@ class Net::LDAP
         conn.close if conn
       end
     end
-    @result == 0
+    @result[:resultCode] == 0
   end
   alias_method :modify_rdn, :rename
 
@@ -1019,7 +1020,7 @@ class Net::LDAP
         conn.close
       end
     end
-    @result == 0
+    @result[:resultCode] == 0
   end
 
   # This method is experimental and subject to change. Return the rootDSE
@@ -1494,7 +1495,7 @@ class Net::LDAP::Connection #:nodoc:
     @conn.write pkt
 
     (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be)) && (pdu.app_tag == 7) or raise Net::LDAP::LdapError, "response missing or invalid"
-    pdu.result_code
+    pdu.result
   end
 
   #--
@@ -1516,7 +1517,7 @@ class Net::LDAP::Connection #:nodoc:
     @conn.write pkt
 
     (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be)) && (pdu.app_tag == 9) or raise Net::LDAP::LdapError, "response missing or invalid"
-    pdu.result_code
+    pdu.result
   end
 
   #--
@@ -1537,7 +1538,7 @@ class Net::LDAP::Connection #:nodoc:
     (be = @conn.read_ber(Net::LDAP::AsnSyntax)) &&
     (pdu = Net::LDAP::PDU.new( be )) && (pdu.app_tag == 13) or
     raise Net::LDAP::LdapError.new( "response missing or invalid" )
-    pdu.result_code
+    pdu.result
   end
 
   #--
@@ -1551,6 +1552,6 @@ class Net::LDAP::Connection #:nodoc:
     @conn.write pkt
 
     (be = @conn.read_ber(Net::LDAP::AsnSyntax)) && (pdu = Net::LDAP::PDU.new(be)) && (pdu.app_tag == 11) or raise Net::LDAP::LdapError, "response missing or invalid"
-    pdu.result_code
+    pdu.result
   end
 end # class Connection
